@@ -12,6 +12,9 @@ const erro = ref('')
 const busca = ref('')
 const filtroStatus = ref('')
 const filtroTipo = ref('')
+const arquivosSelecionados = ref({})
+const uploadEmAndamento = ref({})
+const feedbackUpload = ref({})
 
 const statusOpcoes = [
   { value: '0', label: 'Em Elaboração', badge: 'bg-secondary' },
@@ -60,6 +63,63 @@ async function alterarStatus(tcc, novoStatus) {
     tcc.status_display = res.data.status_display
   } catch (e) {
     alert('Erro ao atualizar o status do TCC.')
+  }
+}
+
+function selecionarArquivo(tccId, event) {
+  const arquivo = event.target.files?.[0]
+  if (!arquivo) return
+
+  const nomePdf = arquivo.name.toLowerCase().endsWith('.pdf')
+  const tipoValido = !arquivo.type || arquivo.type === 'application/pdf'
+  if (!nomePdf || !tipoValido) {
+    arquivosSelecionados.value[tccId] = null
+    feedbackUpload.value[tccId] = {
+      tipo: 'danger',
+      mensagem: 'Selecione um arquivo PDF válido.',
+    }
+    event.target.value = ''
+    return
+  }
+
+  arquivosSelecionados.value[tccId] = arquivo
+  feedbackUpload.value[tccId] = null
+}
+
+function obterMensagemErroUpload(error) {
+  const dados = error.response?.data
+  if (!dados) return 'Não foi possível enviar o PDF. Verifique a conexão com a API.'
+  if (typeof dados === 'string') return dados
+
+  return Object.entries(dados)
+    .map(([campo, mensagens]) => `${campo}: ${Array.isArray(mensagens) ? mensagens.join(' ') : mensagens}`)
+    .join(' ')
+}
+
+async function enviarArquivo(tcc) {
+  const arquivo = arquivosSelecionados.value[tcc.id]
+  if (!arquivo || uploadEmAndamento.value[tcc.id]) return
+
+  const formData = new FormData()
+  formData.append('arquivo', arquivo)
+  uploadEmAndamento.value[tcc.id] = true
+  feedbackUpload.value[tcc.id] = null
+
+  try {
+    const resposta = await api.updateTcc(tcc.id, formData)
+    tcc.arquivo = resposta.data.arquivo
+    arquivosSelecionados.value[tcc.id] = null
+    feedbackUpload.value[tcc.id] = {
+      tipo: 'success',
+      mensagem: 'PDF enviado com sucesso.',
+    }
+  } catch (error) {
+    feedbackUpload.value[tcc.id] = {
+      tipo: 'danger',
+      mensagem: obterMensagemErroUpload(error),
+    }
+  } finally {
+    uploadEmAndamento.value[tcc.id] = false
   }
 }
 
@@ -190,6 +250,7 @@ onMounted(carregarDados)
                   v-if="tcc.arquivo"
                   :href="tcc.arquivo"
                   target="_blank"
+                  rel="noopener noreferrer"
                   class="btn btn-sm btn-outline-danger"
                 >
                   <i class="fa-solid fa-file-pdf me-1"></i> Abrir PDF
@@ -197,6 +258,46 @@ onMounted(carregarDados)
                 <span v-else class="badge bg-warning text-dark align-self-center">Sem PDF</span>
               </div>
             </div>
+
+            <form class="row g-2 align-items-end border-top pt-3 mt-3" @submit.prevent="enviarArquivo(tcc)">
+              <div class="col-md">
+                <label :for="`arquivo-${tcc.id}`" class="form-label small fw-semibold">
+                  {{ tcc.arquivo ? 'Substituir PDF' : 'Enviar PDF' }}
+                </label>
+                <input
+                  :id="`arquivo-${tcc.id}`"
+                  class="form-control form-control-sm"
+                  type="file"
+                  accept=".pdf,application/pdf"
+                  :disabled="uploadEmAndamento[tcc.id]"
+                  @change="selecionarArquivo(tcc.id, $event)"
+                />
+              </div>
+              <div class="col-md-auto d-grid">
+                <button
+                  class="btn btn-sm btn-outline-primary"
+                  type="submit"
+                  :disabled="!arquivosSelecionados[tcc.id] || uploadEmAndamento[tcc.id]"
+                >
+                  <span
+                    v-if="uploadEmAndamento[tcc.id]"
+                    class="spinner-border spinner-border-sm me-1"
+                    role="status"
+                    aria-hidden="true"
+                  ></span>
+                  <i v-else class="fa-solid fa-upload me-1"></i>
+                  {{ uploadEmAndamento[tcc.id] ? 'Enviando...' : 'Enviar PDF' }}
+                </button>
+              </div>
+              <div
+                v-if="feedbackUpload[tcc.id]"
+                class="col-12"
+                :class="`text-${feedbackUpload[tcc.id].tipo}`"
+                :role="feedbackUpload[tcc.id].tipo === 'danger' ? 'alert' : 'status'"
+              >
+                {{ feedbackUpload[tcc.id].mensagem }}
+              </div>
+            </form>
           </div>
         </div>
       </div>

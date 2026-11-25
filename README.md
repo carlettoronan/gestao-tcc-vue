@@ -23,7 +23,8 @@ Aplicação front-end desenvolvida em **Vue.js 3** integrada à API REST em Djan
 - [x] **Filtros dinâmicos:** Busca textual por título/resumo e filtros por status e tipo de trabalho.
 - [x] **Alteração rápida de status:** Atualização direta do status (`Em Elaboração`, `Enviado`, `Aprovado`, `Reprovado`) via `PATCH` na API.
 - [x] **Visualização de PDF:** Botão para abrir o arquivo PDF do TCC quando disponível.
-- [ ] **Cadastro de TCC e Upload de PDF:** Tela de criação de novos trabalhos com envio de arquivo `.pdf`.
+- [x] **Upload de PDF:** Envio ou substituição do arquivo PDF em TCCs existentes.
+- [ ] **Cadastro de TCC:** Tela de criação de novos trabalhos.
 - [ ] **Dashboard de Estatísticas:** Painel visual consumindo `/api/tccs/estatisticas/`.
 
 ---

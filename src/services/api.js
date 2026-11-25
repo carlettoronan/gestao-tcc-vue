@@ -18,11 +18,8 @@ export default {
             headers: { 'Content-Type': 'multipart/form-data' },
         })
     },
-    updateTcc(id, data, isMultipart = false) {
-        const config = isMultipart
-            ? { headers: { 'Content-Type': 'multipart/form-data' } }
-            : {}
-        return api.patch(`tccs/${id}/`, data, config)
+    updateTcc(id, data) {
+        return api.patch(`tccs/${id}/`, data)
     },
     deleteTcc(id) {
         return api.delete(`tccs/${id}/`)
