@@ -7,6 +7,8 @@
         </router-link>
         <div class="navbar-nav ms-auto">
           <router-link class="nav-link" to="/">TCCs</router-link>
+          <router-link class="nav-link" to="/alunos">Alunos</router-link>
+          <router-link class="nav-link" to="/professores">Professores</router-link>
           <router-link class="nav-link" to="/tccs/novo">Cadastrar TCC</router-link>
         </div>
       </div>
