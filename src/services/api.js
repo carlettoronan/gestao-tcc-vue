@@ -14,15 +14,11 @@ export default {
         return api.get(`tccs/${id}/`)
     },
     createTcc(formData) {
-        return api.post('tccs/', formData, {
-            headers: { 'Content-Type': 'multipart/form-data' },
-        })
+        // Deixa o Axios definir o boundary do multipart automaticamente
+        return api.post('tccs/', formData)
     },
-    updateTcc(id, data, isMultipart = false) {
-        const config = isMultipart
-            ? { headers: { 'Content-Type': 'multipart/form-data' } }
-            : {}
-        return api.patch(`tccs/${id}/`, data, config)
+    updateTcc(id, data) {
+        return api.patch(`tccs/${id}/`, data)
     },
     deleteTcc(id) {
         return api.delete(`tccs/${id}/`)
