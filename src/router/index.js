@@ -9,6 +9,9 @@ import CursoListView from '../views/CursoListView.vue'
 import DepartamentoListView from '../views/DepartamentoListView.vue'
 import UnidadeAcademicaListView from '../views/UnidadeAcademicaListView.vue'
 
+import AlunoListView from '../views/AlunoListView.vue'
+import ProfessorListView from '../views/ProfessorListView.vue'
+
 const routes = [
     { path: '/', name: 'tccs', component: TccListView },
     { path: '/tccs/novo', name: 'tccs-novo', component: TccFormView },
