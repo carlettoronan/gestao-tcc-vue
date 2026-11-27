@@ -11,6 +11,7 @@
           <router-link class="nav-link" to="/professores">Professores</router-link>
           <router-link class="nav-link" to="/cursos">Cursos</router-link>
           <router-link class="nav-link" to="/departamentos">Departamentos</router-link>
+          <router-link class="nav-link" to="/unidades-academicas">Unidades acadêmicas</router-link>
           <router-link class="nav-link" to="/tccs/novo">Cadastrar TCC</router-link>
         </div>
       </div>
