@@ -14,9 +14,8 @@ export default {
         return api.get(`tccs/${id}/`)
     },
     createTcc(formData) {
-        return api.post('tccs/', formData, {
-            headers: { 'Content-Type': 'multipart/form-data' },
-        })
+        // Deixa o Axios definir o boundary do multipart automaticamente
+        return api.post('tccs/', formData)
     },
     updateTcc(id, data) {
         return api.patch(`tccs/${id}/`, data)
